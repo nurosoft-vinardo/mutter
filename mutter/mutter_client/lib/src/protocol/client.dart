@@ -11,24 +11,37 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import 'dart:async' as _i2;
-import 'package:mutter_client/src/protocol/greeting.dart' as _i3;
+import 'package:serverpod_auth_client/serverpod_auth_client.dart' as _i3;
 import 'protocol.dart' as _i4;
 
-/// This is an example endpoint that returns a greeting message through its [hello] method.
 /// {@category Endpoint}
-class EndpointGreeting extends _i1.EndpointRef {
-  EndpointGreeting(_i1.EndpointCaller caller) : super(caller);
+class EndpointFriend extends _i1.EndpointRef {
+  EndpointFriend(_i1.EndpointCaller caller) : super(caller);
 
   @override
-  String get name => 'greeting';
+  String get name => 'friend';
 
-  /// Returns a personalized greeting message: "Hello {name}".
-  _i2.Future<_i3.Greeting> hello(String name) =>
-      caller.callServerEndpoint<_i3.Greeting>(
-        'greeting',
-        'hello',
-        {'name': name},
+  _i2.Future<List<_i3.UserInfoPublic>> getFriends() =>
+      caller.callServerEndpoint<List<_i3.UserInfoPublic>>(
+        'friend',
+        'getFriends',
+        {},
       );
+
+  _i2.Future<_i3.UserInfoPublic?> addFriend(String userName) =>
+      caller.callServerEndpoint<_i3.UserInfoPublic?>(
+        'friend',
+        'addFriend',
+        {'userName': userName},
+      );
+}
+
+class Modules {
+  Modules(Client client) {
+    auth = _i3.Caller(client);
+  }
+
+  late final _i3.Caller auth;
 }
 
 class Client extends _i1.ServerpodClientShared {
@@ -57,14 +70,18 @@ class Client extends _i1.ServerpodClientShared {
           disconnectStreamsOnLostInternetConnection:
               disconnectStreamsOnLostInternetConnection,
         ) {
-    greeting = EndpointGreeting(this);
+    friend = EndpointFriend(this);
+    modules = Modules(this);
   }
 
-  late final EndpointGreeting greeting;
+  late final EndpointFriend friend;
+
+  late final Modules modules;
 
   @override
-  Map<String, _i1.EndpointRef> get endpointRefLookup => {'greeting': greeting};
+  Map<String, _i1.EndpointRef> get endpointRefLookup => {'friend': friend};
 
   @override
-  Map<String, _i1.ModuleEndpointCaller> get moduleLookup => {};
+  Map<String, _i1.ModuleEndpointCaller> get moduleLookup =>
+      {'auth': modules.auth};
 }

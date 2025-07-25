@@ -10,28 +10,38 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
-import '../greeting_endpoint.dart' as _i2;
+import '../endpoints.yaml/friend_endpoint.dart' as _i2;
+import 'package:serverpod_auth_server/serverpod_auth_server.dart' as _i3;
 
 class Endpoints extends _i1.EndpointDispatch {
   @override
   void initializeEndpoints(_i1.Server server) {
     var endpoints = <String, _i1.Endpoint>{
-      'greeting': _i2.GreetingEndpoint()
+      'friend': _i2.FriendEndpoint()
         ..initialize(
           server,
-          'greeting',
+          'friend',
           null,
         )
     };
-    connectors['greeting'] = _i1.EndpointConnector(
-      name: 'greeting',
-      endpoint: endpoints['greeting']!,
+    connectors['friend'] = _i1.EndpointConnector(
+      name: 'friend',
+      endpoint: endpoints['friend']!,
       methodConnectors: {
-        'hello': _i1.MethodConnector(
-          name: 'hello',
+        'getFriends': _i1.MethodConnector(
+          name: 'getFriends',
+          params: {},
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['friend'] as _i2.FriendEndpoint).getFriends(session),
+        ),
+        'addFriend': _i1.MethodConnector(
+          name: 'addFriend',
           params: {
-            'name': _i1.ParameterDescription(
-              name: 'name',
+            'userName': _i1.ParameterDescription(
+              name: 'userName',
               type: _i1.getType<String>(),
               nullable: false,
             )
@@ -40,12 +50,13 @@ class Endpoints extends _i1.EndpointDispatch {
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['greeting'] as _i2.GreetingEndpoint).hello(
+              (endpoints['friend'] as _i2.FriendEndpoint).addFriend(
             session,
-            params['name'],
+            params['userName'],
           ),
-        )
+        ),
       },
     );
+    modules['serverpod_auth'] = _i3.Endpoints()..initializeEndpoints(server);
   }
 }

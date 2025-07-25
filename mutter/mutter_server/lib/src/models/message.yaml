@@ -1,0 +1,10 @@
+class: Message
+table: message
+fields:
+  friend: Friend?, relation
+  text: String
+  attachments: List<Attachment>?, relation
+  dateSent: DateTime, default=now
+  dateReceived: DateTime?
+  dateRead: DateTime?
+  failed: bool

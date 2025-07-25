@@ -1,0 +1,6 @@
+class: Attachment
+table: attachment
+fields:
+  name: String
+  type: String
+  content: ByteData

@@ -1,0 +1,5 @@
+class: Friend
+table: friend
+fields:
+  sender: module:auth:UserInfo?, relation
+  recipient: module:auth:UserInfo?, relation
