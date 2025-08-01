@@ -11,9 +11,7 @@ class AppRouter extends RootStackRouter {
 
   @override
   List<AutoRoute> get routes => [
-    AutoRoute(page: FriendsListRoute.page, path: '/', guards: [authGuard]),
-    AutoRoute(page: AddFriendRoute.page, path: '/add_friend', guards: [authGuard]),
-    AutoRoute(page: ChatRoute.page, path: '/chat/:username', guards: [authGuard]),
+    AutoRoute(page: ChatRoute.page, path: '/', guards: [authGuard]),
     AutoRoute(page: SignInRoute.page, path: '/sign_in'),
   ];
 

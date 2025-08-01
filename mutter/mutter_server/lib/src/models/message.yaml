@@ -1,10 +1,9 @@
 class: Message
 table: message
 fields:
-  friend: Friend?, relation
-  text: String
-  attachments: List<Attachment>?, relation
-  dateSent: DateTime, default=now
-  dateReceived: DateTime?
-  dateRead: DateTime?
-  failed: bool
+  uuid: UuidValue?, default=random_v7
+  content: String
+indexes:
+  message_uuid_idx:
+    fields: uuid
+    unique: true

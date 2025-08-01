@@ -1,0 +1,164 @@
+{
+  "actions": [
+    {
+      "type": "deleteTable",
+      "deleteTable": "friend"
+    },
+    {
+      "type": "deleteTable",
+      "deleteTable": "attachment"
+    },
+    {
+      "type": "deleteTable",
+      "deleteTable": "message"
+    },
+    {
+      "type": "createTable",
+      "createTable": {
+        "name": "message",
+        "dartName": "Message",
+        "module": "mutter",
+        "schema": "public",
+        "columns": [
+          {
+            "name": "id",
+            "columnType": 6,
+            "isNullable": false,
+            "columnDefault": "nextval('message_id_seq'::regclass)",
+            "dartType": "int?"
+          },
+          {
+            "name": "uuid",
+            "columnType": 7,
+            "isNullable": true,
+            "columnDefault": "gen_random_uuid_v7()",
+            "dartType": "UuidValue?"
+          },
+          {
+            "name": "content",
+            "columnType": 0,
+            "isNullable": false,
+            "dartType": "String"
+          }
+        ],
+        "foreignKeys": [],
+        "indexes": [
+          {
+            "indexName": "message_pkey",
+            "elements": [
+              {
+                "type": 0,
+                "definition": "id"
+              }
+            ],
+            "type": "btree",
+            "isUnique": true,
+            "isPrimary": true
+          },
+          {
+            "indexName": "message_uuid_idx",
+            "elements": [
+              {
+                "type": 0,
+                "definition": "uuid"
+              }
+            ],
+            "type": "btree",
+            "isUnique": true,
+            "isPrimary": false
+          }
+        ],
+        "managed": true
+      }
+    }
+  ],
+  "warnings": [
+    {
+      "type": "tableDropped",
+      "message": "Table \"friend\" will be dropped.",
+      "table": "friend",
+      "columns": [],
+      "destrucive": true
+    },
+    {
+      "type": "tableDropped",
+      "message": "Table \"attachment\" will be dropped.",
+      "table": "attachment",
+      "columns": [],
+      "destrucive": true
+    },
+    {
+      "type": "columnDropped",
+      "message": "Column \"friendId\" of table \"message\" will be dropped.",
+      "table": "message",
+      "columns": [
+        "friendId"
+      ],
+      "destrucive": true
+    },
+    {
+      "type": "columnDropped",
+      "message": "Column \"text\" of table \"message\" will be dropped.",
+      "table": "message",
+      "columns": [
+        "text"
+      ],
+      "destrucive": true
+    },
+    {
+      "type": "columnDropped",
+      "message": "Column \"dateSent\" of table \"message\" will be dropped.",
+      "table": "message",
+      "columns": [
+        "dateSent"
+      ],
+      "destrucive": true
+    },
+    {
+      "type": "columnDropped",
+      "message": "Column \"dateReceived\" of table \"message\" will be dropped.",
+      "table": "message",
+      "columns": [
+        "dateReceived"
+      ],
+      "destrucive": true
+    },
+    {
+      "type": "columnDropped",
+      "message": "Column \"dateRead\" of table \"message\" will be dropped.",
+      "table": "message",
+      "columns": [
+        "dateRead"
+      ],
+      "destrucive": true
+    },
+    {
+      "type": "columnDropped",
+      "message": "Column \"failed\" of table \"message\" will be dropped.",
+      "table": "message",
+      "columns": [
+        "failed"
+      ],
+      "destrucive": true
+    },
+    {
+      "type": "uniqueIndexCreated",
+      "message": "Unique index \"message_uuid_idx\" is added to table \"message\". If there are existing rows with duplicate values, this migration will fail.",
+      "table": "message",
+      "columns": [
+        "uuid"
+      ],
+      "destrucive": false
+    },
+    {
+      "type": "tableDropped",
+      "message": "One or more columns are added to table \"message\" which cannot be added in a table migration. The complete table will be deleted and recreated.",
+      "table": "message",
+      "columns": [
+        "content"
+      ],
+      "destrucive": true
+    }
+  ],
+  "migrationApiVersion": 1
+}

@@ -12,11 +12,7 @@
 import 'package:serverpod/serverpod.dart' as _i1;
 import 'package:serverpod/protocol.dart' as _i2;
 import 'package:serverpod_auth_server/serverpod_auth_server.dart' as _i3;
-import 'attachment.dart' as _i4;
-import 'friend.dart' as _i5;
-import 'message.dart' as _i6;
-export 'attachment.dart';
-export 'friend.dart';
+import 'message.dart' as _i4;
 export 'message.dart';
 
 class Protocol extends _i1.SerializationManagerServer {
@@ -27,138 +23,6 @@ class Protocol extends _i1.SerializationManagerServer {
   static final Protocol _instance = Protocol._();
 
   static final List<_i2.TableDefinition> targetTableDefinitions = [
-    _i2.TableDefinition(
-      name: 'attachment',
-      dartName: 'Attachment',
-      schema: 'public',
-      module: 'mutter',
-      columns: [
-        _i2.ColumnDefinition(
-          name: 'id',
-          columnType: _i2.ColumnType.bigint,
-          isNullable: false,
-          dartType: 'int?',
-          columnDefault: 'nextval(\'attachment_id_seq\'::regclass)',
-        ),
-        _i2.ColumnDefinition(
-          name: 'name',
-          columnType: _i2.ColumnType.text,
-          isNullable: false,
-          dartType: 'String',
-        ),
-        _i2.ColumnDefinition(
-          name: 'type',
-          columnType: _i2.ColumnType.text,
-          isNullable: false,
-          dartType: 'String',
-        ),
-        _i2.ColumnDefinition(
-          name: 'content',
-          columnType: _i2.ColumnType.bytea,
-          isNullable: false,
-          dartType: 'dart:typed_data:ByteData',
-        ),
-        _i2.ColumnDefinition(
-          name: '_messageAttachmentsMessageId',
-          columnType: _i2.ColumnType.bigint,
-          isNullable: true,
-          dartType: 'int?',
-        ),
-      ],
-      foreignKeys: [
-        _i2.ForeignKeyDefinition(
-          constraintName: 'attachment_fk_0',
-          columns: ['_messageAttachmentsMessageId'],
-          referenceTable: 'message',
-          referenceTableSchema: 'public',
-          referenceColumns: ['id'],
-          onUpdate: _i2.ForeignKeyAction.noAction,
-          onDelete: _i2.ForeignKeyAction.noAction,
-          matchType: null,
-        )
-      ],
-      indexes: [
-        _i2.IndexDefinition(
-          indexName: 'attachment_pkey',
-          tableSpace: null,
-          elements: [
-            _i2.IndexElementDefinition(
-              type: _i2.IndexElementDefinitionType.column,
-              definition: 'id',
-            )
-          ],
-          type: 'btree',
-          isUnique: true,
-          isPrimary: true,
-        )
-      ],
-      managed: true,
-    ),
-    _i2.TableDefinition(
-      name: 'friend',
-      dartName: 'Friend',
-      schema: 'public',
-      module: 'mutter',
-      columns: [
-        _i2.ColumnDefinition(
-          name: 'id',
-          columnType: _i2.ColumnType.bigint,
-          isNullable: false,
-          dartType: 'int?',
-          columnDefault: 'nextval(\'friend_id_seq\'::regclass)',
-        ),
-        _i2.ColumnDefinition(
-          name: 'senderId',
-          columnType: _i2.ColumnType.bigint,
-          isNullable: false,
-          dartType: 'int',
-        ),
-        _i2.ColumnDefinition(
-          name: 'recipientId',
-          columnType: _i2.ColumnType.bigint,
-          isNullable: false,
-          dartType: 'int',
-        ),
-      ],
-      foreignKeys: [
-        _i2.ForeignKeyDefinition(
-          constraintName: 'friend_fk_0',
-          columns: ['senderId'],
-          referenceTable: 'serverpod_user_info',
-          referenceTableSchema: 'public',
-          referenceColumns: ['id'],
-          onUpdate: _i2.ForeignKeyAction.noAction,
-          onDelete: _i2.ForeignKeyAction.noAction,
-          matchType: null,
-        ),
-        _i2.ForeignKeyDefinition(
-          constraintName: 'friend_fk_1',
-          columns: ['recipientId'],
-          referenceTable: 'serverpod_user_info',
-          referenceTableSchema: 'public',
-          referenceColumns: ['id'],
-          onUpdate: _i2.ForeignKeyAction.noAction,
-          onDelete: _i2.ForeignKeyAction.noAction,
-          matchType: null,
-        ),
-      ],
-      indexes: [
-        _i2.IndexDefinition(
-          indexName: 'friend_pkey',
-          tableSpace: null,
-          elements: [
-            _i2.IndexElementDefinition(
-              type: _i2.IndexElementDefinitionType.column,
-              definition: 'id',
-            )
-          ],
-          type: 'btree',
-          isUnique: true,
-          isPrimary: true,
-        )
-      ],
-      managed: true,
-    ),
     _i2.TableDefinition(
       name: 'message',
       dartName: 'Message',
@@ -173,55 +37,20 @@ class Protocol extends _i1.SerializationManagerServer {
           columnDefault: 'nextval(\'message_id_seq\'::regclass)',
         ),
         _i2.ColumnDefinition(
-          name: 'friendId',
-          columnType: _i2.ColumnType.bigint,
-          isNullable: false,
-          dartType: 'int',
+          name: 'uuid',
+          columnType: _i2.ColumnType.uuid,
+          isNullable: true,
+          dartType: 'UuidValue?',
+          columnDefault: 'gen_random_uuid_v7()',
         ),
         _i2.ColumnDefinition(
-          name: 'text',
+          name: 'content',
           columnType: _i2.ColumnType.text,
           isNullable: false,
           dartType: 'String',
         ),
-        _i2.ColumnDefinition(
-          name: 'dateSent',
-          columnType: _i2.ColumnType.timestampWithoutTimeZone,
-          isNullable: false,
-          dartType: 'DateTime',
-          columnDefault: 'CURRENT_TIMESTAMP',
-        ),
-        _i2.ColumnDefinition(
-          name: 'dateReceived',
-          columnType: _i2.ColumnType.timestampWithoutTimeZone,
-          isNullable: true,
-          dartType: 'DateTime?',
-        ),
-        _i2.ColumnDefinition(
-          name: 'dateRead',
-          columnType: _i2.ColumnType.timestampWithoutTimeZone,
-          isNullable: true,
-          dartType: 'DateTime?',
-        ),
-        _i2.ColumnDefinition(
-          name: 'failed',
-          columnType: _i2.ColumnType.boolean,
-          isNullable: false,
-          dartType: 'bool',
-        ),
       ],
-      foreignKeys: [
-        _i2.ForeignKeyDefinition(
-          constraintName: 'message_fk_0',
-          columns: ['friendId'],
-          referenceTable: 'friend',
-          referenceTableSchema: 'public',
-          referenceColumns: ['id'],
-          onUpdate: _i2.ForeignKeyAction.noAction,
-          onDelete: _i2.ForeignKeyAction.noAction,
-          matchType: null,
-        )
-      ],
+      foreignKeys: [],
       indexes: [
         _i2.IndexDefinition(
           indexName: 'message_pkey',
@@ -235,7 +64,20 @@ class Protocol extends _i1.SerializationManagerServer {
           type: 'btree',
           isUnique: true,
           isPrimary: true,
-        )
+        ),
+        _i2.IndexDefinition(
+          indexName: 'message_uuid_idx',
+          tableSpace: null,
+          elements: [
+            _i2.IndexElementDefinition(
+              type: _i2.IndexElementDefinitionType.column,
+              definition: 'uuid',
+            )
+          ],
+          type: 'btree',
+          isUnique: true,
+          isPrimary: false,
+        ),
       ],
       managed: true,
     ),
@@ -249,28 +91,11 @@ class Protocol extends _i1.SerializationManagerServer {
     Type? t,
   ]) {
     t ??= T;
-    if (t == _i4.Attachment) {
-      return _i4.Attachment.fromJson(data) as T;
+    if (t == _i4.Message) {
+      return _i4.Message.fromJson(data) as T;
     }
-    if (t == _i5.Friend) {
-      return _i5.Friend.fromJson(data) as T;
-    }
-    if (t == _i6.Message) {
-      return _i6.Message.fromJson(data) as T;
-    }
-    if (t == _i1.getType<_i4.Attachment?>()) {
-      return (data != null ? _i4.Attachment.fromJson(data) : null) as T;
-    }
-    if (t == _i1.getType<_i5.Friend?>()) {
-      return (data != null ? _i5.Friend.fromJson(data) : null) as T;
-    }
-    if (t == _i1.getType<_i6.Message?>()) {
-      return (data != null ? _i6.Message.fromJson(data) : null) as T;
-    }
-    if (t == _i1.getType<List<_i4.Attachment>?>()) {
-      return (data != null
-          ? (data as List).map((e) => deserialize<_i4.Attachment>(e)).toList()
-          : null) as T;
+    if (t == _i1.getType<_i4.Message?>()) {
+      return (data != null ? _i4.Message.fromJson(data) : null) as T;
     }
     if (t == List<_i3.UserInfoPublic>) {
       return (data as List)
@@ -290,13 +115,7 @@ class Protocol extends _i1.SerializationManagerServer {
   String? getClassNameForObject(Object? data) {
     String? className = super.getClassNameForObject(data);
     if (className != null) return className;
-    if (data is _i4.Attachment) {
-      return 'Attachment';
-    }
-    if (data is _i5.Friend) {
-      return 'Friend';
-    }
-    if (data is _i6.Message) {
+    if (data is _i4.Message) {
       return 'Message';
     }
     className = _i2.Protocol().getClassNameForObject(data);
@@ -316,14 +135,8 @@ class Protocol extends _i1.SerializationManagerServer {
     if (dataClassName is! String) {
       return super.deserializeByClassName(data);
     }
-    if (dataClassName == 'Attachment') {
-      return deserialize<_i4.Attachment>(data['data']);
-    }
-    if (dataClassName == 'Friend') {
-      return deserialize<_i5.Friend>(data['data']);
-    }
     if (dataClassName == 'Message') {
-      return deserialize<_i6.Message>(data['data']);
+      return deserialize<_i4.Message>(data['data']);
     }
     if (dataClassName.startsWith('serverpod.')) {
       data['className'] = dataClassName.substring(10);
@@ -351,12 +164,8 @@ class Protocol extends _i1.SerializationManagerServer {
       }
     }
     switch (t) {
-      case _i4.Attachment:
-        return _i4.Attachment.t;
-      case _i5.Friend:
-        return _i5.Friend.t;
-      case _i6.Message:
-        return _i6.Message.t;
+      case _i4.Message:
+        return _i4.Message.t;
     }
     return null;
   }

@@ -14,7 +14,8 @@
 import 'package:serverpod_test/serverpod_test.dart' as _i1;
 import 'package:serverpod/serverpod.dart' as _i2;
 import 'dart:async' as _i3;
-import 'package:serverpod_auth_server/serverpod_auth_server.dart' as _i4;
+import 'package:mutter_server/src/generated/message.dart' as _i4;
+import 'package:serverpod_auth_server/serverpod_auth_server.dart' as _i5;
 import 'package:mutter_server/src/generated/protocol.dart';
 import 'package:mutter_server/src/generated/endpoints.dart';
 export 'package:serverpod_test/serverpod_test_public_exports.dart';
@@ -75,6 +76,7 @@ void withServerpod(
   _i2.ExperimentalFeatures? experimentalFeatures,
   _i1.RollbackDatabase? rollbackDatabase,
   String? runMode,
+  _i2.RuntimeParametersListBuilder? runtimeParametersBuilder,
   _i2.ServerpodLoggingMode? serverpodLoggingMode,
   Duration? serverpodStartTimeout,
   List<String>? testGroupTagsOverride,
@@ -90,6 +92,7 @@ void withServerpod(
       isDatabaseEnabled: true,
       serverpodLoggingMode: serverpodLoggingMode,
       experimentalFeatures: experimentalFeatures,
+      runtimeParametersBuilder: runtimeParametersBuilder,
     ),
     maybeRollbackDatabase: rollbackDatabase,
     maybeEnableSessionLogging: enableSessionLogging,
@@ -99,7 +102,9 @@ void withServerpod(
 }
 
 class TestEndpoints {
-  late final _FriendEndpoint friend;
+  late final _MessageEndpoint message;
+
+  late final _UserInfoEndpoint userInfo;
 }
 
 class _InternalTestEndpoints extends TestEndpoints
@@ -109,15 +114,19 @@ class _InternalTestEndpoints extends TestEndpoints
     _i2.SerializationManager serializationManager,
     _i2.EndpointDispatch endpoints,
   ) {
-    friend = _FriendEndpoint(
+    message = _MessageEndpoint(
+      endpoints,
+      serializationManager,
+    );
+    userInfo = _UserInfoEndpoint(
       endpoints,
       serializationManager,
     );
   }
 }
 
-class _FriendEndpoint {
-  _FriendEndpoint(
+class _MessageEndpoint {
+  _MessageEndpoint(
     this._endpointDispatch,
     this._serializationManager,
   );
@@ -126,26 +135,32 @@ class _FriendEndpoint {
 
   final _i2.SerializationManager _serializationManager;
 
-  _i3.Future<List<_i4.UserInfoPublic>> getFriends(
-      _i1.TestSessionBuilder sessionBuilder) async {
+  _i3.Future<int> sendMessage(
+    _i1.TestSessionBuilder sessionBuilder,
+    String messageId,
+    String message,
+  ) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
-        endpoint: 'friend',
-        method: 'getFriends',
+        endpoint: 'message',
+        method: 'sendMessage',
       );
       try {
         var _localCallContext = await _endpointDispatch.getMethodCallContext(
           createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'friend',
-          methodName: 'getFriends',
-          parameters: _i1.testObjectToJson({}),
+          endpointPath: 'message',
+          methodName: 'sendMessage',
+          parameters: _i1.testObjectToJson({
+            'messageId': messageId,
+            'message': message,
+          }),
           serializationManager: _serializationManager,
         );
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<List<_i4.UserInfoPublic>>);
+        ) as _i3.Future<int>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();
@@ -153,28 +168,67 @@ class _FriendEndpoint {
     });
   }
 
-  _i3.Future<_i4.UserInfoPublic?> addFriend(
-    _i1.TestSessionBuilder sessionBuilder,
-    String userName,
-  ) async {
+  _i3.Stream<_i4.Message> messageUpdates(
+      _i1.TestSessionBuilder sessionBuilder) {
+    var _localTestStreamManager = _i1.TestStreamManager<_i4.Message>();
+    _i1.callStreamFunctionAndHandleExceptions(
+      () async {
+        var _localUniqueSession =
+            (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
+          endpoint: 'message',
+          method: 'messageUpdates',
+        );
+        var _localCallContext =
+            await _endpointDispatch.getMethodStreamCallContext(
+          createSessionCallback: (_) => _localUniqueSession,
+          endpointPath: 'message',
+          methodName: 'messageUpdates',
+          arguments: {},
+          requestedInputStreams: [],
+          serializationManager: _serializationManager,
+        );
+        await _localTestStreamManager.callStreamMethod(
+          _localCallContext,
+          _localUniqueSession,
+          {},
+        );
+      },
+      _localTestStreamManager.outputStreamController,
+    );
+    return _localTestStreamManager.outputStreamController.stream;
+  }
+}
+
+class _UserInfoEndpoint {
+  _UserInfoEndpoint(
+    this._endpointDispatch,
+    this._serializationManager,
+  );
+
+  final _i2.EndpointDispatch _endpointDispatch;
+
+  final _i2.SerializationManager _serializationManager;
+
+  _i3.Future<List<_i5.UserInfoPublic>> getUsers(
+      _i1.TestSessionBuilder sessionBuilder) async {
     return _i1.callAwaitableFunctionAndHandleExceptions(() async {
       var _localUniqueSession =
           (sessionBuilder as _i1.InternalTestSessionBuilder).internalBuild(
-        endpoint: 'friend',
-        method: 'addFriend',
+        endpoint: 'userInfo',
+        method: 'getUsers',
       );
       try {
         var _localCallContext = await _endpointDispatch.getMethodCallContext(
           createSessionCallback: (_) => _localUniqueSession,
-          endpointPath: 'friend',
-          methodName: 'addFriend',
-          parameters: _i1.testObjectToJson({'userName': userName}),
+          endpointPath: 'userInfo',
+          methodName: 'getUsers',
+          parameters: _i1.testObjectToJson({}),
           serializationManager: _serializationManager,
         );
         var _localReturnValue = await (_localCallContext.method.call(
           _localUniqueSession,
           _localCallContext.arguments,
-        ) as _i3.Future<_i4.UserInfoPublic?>);
+        ) as _i3.Future<List<_i5.UserInfoPublic>>);
         return _localReturnValue;
       } finally {
         await _localUniqueSession.close();

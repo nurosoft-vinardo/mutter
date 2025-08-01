@@ -1,6 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_chat_core/flutter_chat_core.dart' as chat;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mutter_client/mutter_client.dart';
+import 'package:mutter_flutter/src/app/custom_chat_controller.dart';
 import 'package:mutter_flutter/src/app/router.dart';
 import 'package:mutter_flutter/src/app/router.gr.dart';
 import 'package:mutter_flutter/src/app/session.dart';
@@ -13,6 +17,8 @@ import 'package:mutter_flutter/src/serverpod_client.dart';
 /// production servers.
 /// In a larger app, you may want to use the dependency injection of your choice instead of
 /// using a global client object. This is just a simple example.
+
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,36 +46,46 @@ class AppState extends ConsumerState<App> {
       session.setUser(sessionManager.signedInUser);
 
       if (sessionManager.isSignedIn) {
-        _appRouter.replace(FriendsListRoute());
+        _appRouter.replacePath('/');
       } else {
-        _appRouter.replace(SignInRoute());
+        _appRouter.replacePath('/sign_in');
       }
     };
     sessionManager.addListener(_listener);
+    _listenToUpdates();
   }
 
   @override
   void dispose() {
-    super.dispose();
     sessionManager.removeListener(_listener);
+    chatController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    /*
-    return MaterialApp(
-      title: 'Mutter',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: null,
-    );
-    */
+    ref.watch(sessionProvider);
     return MaterialApp.router(
       routerConfig: _appRouter.config(),
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
     );
+  }
+
+  Future<void> _listenToUpdates() async {
+    while (true) {
+      try {
+        final messageUpdates = client.message.messageUpdates();
+
+        await for (final message in messageUpdates) {
+          chatController.insertMessage(chat.Message.fromJson(jsonDecode(message.content)), index: message.id!);
+        }
+      } on MethodStreamException catch (_) {
+        chatController.setMessages([]);
+      }
+
+      await Future.delayed(Duration(seconds: 5));
+    }
   }
 }

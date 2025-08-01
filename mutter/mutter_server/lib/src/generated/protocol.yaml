@@ -1,3 +1,5 @@
-friend:
-  - getFriends:
-  - addFriend:
+message:
+  - sendMessage:
+  - messageUpdates:
+userInfo:
+  - getUsers:

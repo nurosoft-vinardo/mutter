@@ -11,37 +11,60 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
 import 'dart:async' as _i2;
-import 'package:serverpod_auth_client/serverpod_auth_client.dart' as _i3;
-import 'protocol.dart' as _i4;
+import 'package:mutter_client/src/protocol/message.dart' as _i3;
+import 'package:serverpod_auth_client/serverpod_auth_client.dart' as _i4;
+import 'protocol.dart' as _i5;
 
 /// {@category Endpoint}
-class EndpointFriend extends _i1.EndpointRef {
-  EndpointFriend(_i1.EndpointCaller caller) : super(caller);
+class EndpointMessage extends _i1.EndpointRef {
+  EndpointMessage(_i1.EndpointCaller caller) : super(caller);
 
   @override
-  String get name => 'friend';
+  String get name => 'message';
 
-  _i2.Future<List<_i3.UserInfoPublic>> getFriends() =>
-      caller.callServerEndpoint<List<_i3.UserInfoPublic>>(
-        'friend',
-        'getFriends',
-        {},
+  _i2.Future<int> sendMessage(
+    String messageId,
+    String message,
+  ) =>
+      caller.callServerEndpoint<int>(
+        'message',
+        'sendMessage',
+        {
+          'messageId': messageId,
+          'message': message,
+        },
       );
 
-  _i2.Future<_i3.UserInfoPublic?> addFriend(String userName) =>
-      caller.callServerEndpoint<_i3.UserInfoPublic?>(
-        'friend',
-        'addFriend',
-        {'userName': userName},
+  _i2.Stream<_i3.Message> messageUpdates() =>
+      caller.callStreamingServerEndpoint<_i2.Stream<_i3.Message>, _i3.Message>(
+        'message',
+        'messageUpdates',
+        {},
+        {},
+      );
+}
+
+/// {@category Endpoint}
+class EndpointUserInfo extends _i1.EndpointRef {
+  EndpointUserInfo(_i1.EndpointCaller caller) : super(caller);
+
+  @override
+  String get name => 'userInfo';
+
+  _i2.Future<List<_i4.UserInfoPublic>> getUsers() =>
+      caller.callServerEndpoint<List<_i4.UserInfoPublic>>(
+        'userInfo',
+        'getUsers',
+        {},
       );
 }
 
 class Modules {
   Modules(Client client) {
-    auth = _i3.Caller(client);
+    auth = _i4.Caller(client);
   }
 
-  late final _i3.Caller auth;
+  late final _i4.Caller auth;
 }
 
 class Client extends _i1.ServerpodClientShared {
@@ -60,7 +83,7 @@ class Client extends _i1.ServerpodClientShared {
     bool? disconnectStreamsOnLostInternetConnection,
   }) : super(
           host,
-          _i4.Protocol(),
+          _i5.Protocol(),
           securityContext: securityContext,
           authenticationKeyManager: authenticationKeyManager,
           streamingConnectionTimeout: streamingConnectionTimeout,
@@ -70,16 +93,22 @@ class Client extends _i1.ServerpodClientShared {
           disconnectStreamsOnLostInternetConnection:
               disconnectStreamsOnLostInternetConnection,
         ) {
-    friend = EndpointFriend(this);
+    message = EndpointMessage(this);
+    userInfo = EndpointUserInfo(this);
     modules = Modules(this);
   }
 
-  late final EndpointFriend friend;
+  late final EndpointMessage message;
+
+  late final EndpointUserInfo userInfo;
 
   late final Modules modules;
 
   @override
-  Map<String, _i1.EndpointRef> get endpointRefLookup => {'friend': friend};
+  Map<String, _i1.EndpointRef> get endpointRefLookup => {
+        'message': message,
+        'userInfo': userInfo,
+      };
 
   @override
   Map<String, _i1.ModuleEndpointCaller> get moduleLookup =>

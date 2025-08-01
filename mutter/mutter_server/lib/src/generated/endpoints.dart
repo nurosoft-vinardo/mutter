@@ -10,53 +10,85 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod/serverpod.dart' as _i1;
-import '../endpoints.yaml/friend_endpoint.dart' as _i2;
-import 'package:serverpod_auth_server/serverpod_auth_server.dart' as _i3;
+import '../endpoints.yaml/message_endpoint.dart' as _i2;
+import '../endpoints.yaml/user_info_endpoint.dart' as _i3;
+import 'package:serverpod_auth_server/serverpod_auth_server.dart' as _i4;
 
 class Endpoints extends _i1.EndpointDispatch {
   @override
   void initializeEndpoints(_i1.Server server) {
     var endpoints = <String, _i1.Endpoint>{
-      'friend': _i2.FriendEndpoint()
+      'message': _i2.MessageEndpoint()
         ..initialize(
           server,
-          'friend',
+          'message',
           null,
-        )
-    };
-    connectors['friend'] = _i1.EndpointConnector(
-      name: 'friend',
-      endpoint: endpoints['friend']!,
-      methodConnectors: {
-        'getFriends': _i1.MethodConnector(
-          name: 'getFriends',
-          params: {},
-          call: (
-            _i1.Session session,
-            Map<String, dynamic> params,
-          ) async =>
-              (endpoints['friend'] as _i2.FriendEndpoint).getFriends(session),
         ),
-        'addFriend': _i1.MethodConnector(
-          name: 'addFriend',
+      'userInfo': _i3.UserInfoEndpoint()
+        ..initialize(
+          server,
+          'userInfo',
+          null,
+        ),
+    };
+    connectors['message'] = _i1.EndpointConnector(
+      name: 'message',
+      endpoint: endpoints['message']!,
+      methodConnectors: {
+        'sendMessage': _i1.MethodConnector(
+          name: 'sendMessage',
           params: {
-            'userName': _i1.ParameterDescription(
-              name: 'userName',
+            'messageId': _i1.ParameterDescription(
+              name: 'messageId',
               type: _i1.getType<String>(),
               nullable: false,
-            )
+            ),
+            'message': _i1.ParameterDescription(
+              name: 'message',
+              type: _i1.getType<String>(),
+              nullable: false,
+            ),
           },
           call: (
             _i1.Session session,
             Map<String, dynamic> params,
           ) async =>
-              (endpoints['friend'] as _i2.FriendEndpoint).addFriend(
+              (endpoints['message'] as _i2.MessageEndpoint).sendMessage(
             session,
-            params['userName'],
+            params['messageId'],
+            params['message'],
           ),
+        ),
+        'messageUpdates': _i1.MethodStreamConnector(
+          name: 'messageUpdates',
+          params: {},
+          streamParams: {},
+          returnType: _i1.MethodStreamReturnType.streamType,
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+            Map<String, Stream> streamParams,
+          ) =>
+              (endpoints['message'] as _i2.MessageEndpoint)
+                  .messageUpdates(session),
         ),
       },
     );
-    modules['serverpod_auth'] = _i3.Endpoints()..initializeEndpoints(server);
+    connectors['userInfo'] = _i1.EndpointConnector(
+      name: 'userInfo',
+      endpoint: endpoints['userInfo']!,
+      methodConnectors: {
+        'getUsers': _i1.MethodConnector(
+          name: 'getUsers',
+          params: {},
+          call: (
+            _i1.Session session,
+            Map<String, dynamic> params,
+          ) async =>
+              (endpoints['userInfo'] as _i3.UserInfoEndpoint).getUsers(session),
+        )
+      },
+    );
+    modules['serverpod_auth'] = _i4.Endpoints()..initializeEndpoints(server);
   }
 }

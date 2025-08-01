@@ -10,56 +10,27 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:serverpod_client/serverpod_client.dart' as _i1;
-import 'friend.dart' as _i2;
-import 'attachment.dart' as _i3;
 
 abstract class Message implements _i1.SerializableModel {
   Message._({
     this.id,
-    required this.friendId,
-    this.friend,
-    required this.text,
-    this.attachments,
-    DateTime? dateSent,
-    this.dateReceived,
-    this.dateRead,
-    required this.failed,
-  }) : dateSent = dateSent ?? DateTime.now();
+    _i1.UuidValue? uuid,
+    required this.content,
+  }) : uuid = uuid ?? _i1.Uuid().v7obj();
 
   factory Message({
     int? id,
-    required int friendId,
-    _i2.Friend? friend,
-    required String text,
-    List<_i3.Attachment>? attachments,
-    DateTime? dateSent,
-    DateTime? dateReceived,
-    DateTime? dateRead,
-    required bool failed,
+    _i1.UuidValue? uuid,
+    required String content,
   }) = _MessageImpl;
 
   factory Message.fromJson(Map<String, dynamic> jsonSerialization) {
     return Message(
       id: jsonSerialization['id'] as int?,
-      friendId: jsonSerialization['friendId'] as int,
-      friend: jsonSerialization['friend'] == null
+      uuid: jsonSerialization['uuid'] == null
           ? null
-          : _i2.Friend.fromJson(
-              (jsonSerialization['friend'] as Map<String, dynamic>)),
-      text: jsonSerialization['text'] as String,
-      attachments: (jsonSerialization['attachments'] as List?)
-          ?.map((e) => _i3.Attachment.fromJson((e as Map<String, dynamic>)))
-          .toList(),
-      dateSent:
-          _i1.DateTimeJsonExtension.fromJson(jsonSerialization['dateSent']),
-      dateReceived: jsonSerialization['dateReceived'] == null
-          ? null
-          : _i1.DateTimeJsonExtension.fromJson(
-              jsonSerialization['dateReceived']),
-      dateRead: jsonSerialization['dateRead'] == null
-          ? null
-          : _i1.DateTimeJsonExtension.fromJson(jsonSerialization['dateRead']),
-      failed: jsonSerialization['failed'] as bool,
+          : _i1.UuidValueJsonExtension.fromJson(jsonSerialization['uuid']),
+      content: jsonSerialization['content'] as String,
     );
   }
 
@@ -68,49 +39,24 @@ abstract class Message implements _i1.SerializableModel {
   /// the id will be null.
   int? id;
 
-  int friendId;
+  _i1.UuidValue? uuid;
 
-  _i2.Friend? friend;
-
-  String text;
-
-  List<_i3.Attachment>? attachments;
-
-  DateTime dateSent;
-
-  DateTime? dateReceived;
-
-  DateTime? dateRead;
-
-  bool failed;
+  String content;
 
   /// Returns a shallow copy of this [Message]
   /// with some or all fields replaced by the given arguments.
   @_i1.useResult
   Message copyWith({
     int? id,
-    int? friendId,
-    _i2.Friend? friend,
-    String? text,
-    List<_i3.Attachment>? attachments,
-    DateTime? dateSent,
-    DateTime? dateReceived,
-    DateTime? dateRead,
-    bool? failed,
+    _i1.UuidValue? uuid,
+    String? content,
   });
   @override
   Map<String, dynamic> toJson() {
     return {
       if (id != null) 'id': id,
-      'friendId': friendId,
-      if (friend != null) 'friend': friend?.toJson(),
-      'text': text,
-      if (attachments != null)
-        'attachments': attachments?.toJson(valueToJson: (v) => v.toJson()),
-      'dateSent': dateSent.toJson(),
-      if (dateReceived != null) 'dateReceived': dateReceived?.toJson(),
-      if (dateRead != null) 'dateRead': dateRead?.toJson(),
-      'failed': failed,
+      if (uuid != null) 'uuid': uuid?.toJson(),
+      'content': content,
     };
   }
 
@@ -125,24 +71,12 @@ class _Undefined {}
 class _MessageImpl extends Message {
   _MessageImpl({
     int? id,
-    required int friendId,
-    _i2.Friend? friend,
-    required String text,
-    List<_i3.Attachment>? attachments,
-    DateTime? dateSent,
-    DateTime? dateReceived,
-    DateTime? dateRead,
-    required bool failed,
+    _i1.UuidValue? uuid,
+    required String content,
   }) : super._(
           id: id,
-          friendId: friendId,
-          friend: friend,
-          text: text,
-          attachments: attachments,
-          dateSent: dateSent,
-          dateReceived: dateReceived,
-          dateRead: dateRead,
-          failed: failed,
+          uuid: uuid,
+          content: content,
         );
 
   /// Returns a shallow copy of this [Message]
@@ -151,28 +85,13 @@ class _MessageImpl extends Message {
   @override
   Message copyWith({
     Object? id = _Undefined,
-    int? friendId,
-    Object? friend = _Undefined,
-    String? text,
-    Object? attachments = _Undefined,
-    DateTime? dateSent,
-    Object? dateReceived = _Undefined,
-    Object? dateRead = _Undefined,
-    bool? failed,
+    Object? uuid = _Undefined,
+    String? content,
   }) {
     return Message(
       id: id is int? ? id : this.id,
-      friendId: friendId ?? this.friendId,
-      friend: friend is _i2.Friend? ? friend : this.friend?.copyWith(),
-      text: text ?? this.text,
-      attachments: attachments is List<_i3.Attachment>?
-          ? attachments
-          : this.attachments?.map((e0) => e0.copyWith()).toList(),
-      dateSent: dateSent ?? this.dateSent,
-      dateReceived:
-          dateReceived is DateTime? ? dateReceived : this.dateReceived,
-      dateRead: dateRead is DateTime? ? dateRead : this.dateRead,
-      failed: failed ?? this.failed,
+      uuid: uuid is _i1.UuidValue? ? uuid : this.uuid,
+      content: content ?? this.content,
     );
   }
 }

@@ -4,10 +4,10 @@ import 'package:mutter_flutter/src/serverpod_client.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:serverpod_auth_client/serverpod_auth_client.dart';
 
-part 'friends.g.dart';
+part 'users.g.dart';
 
 @riverpod
-Future<List<UserInfoPublic>> friends(Ref ref) async {
+Future<List<UserInfoPublic>> users(Ref ref) async {
   ref.watch(sessionProvider);
-  return client.friend.getFriends();
+  return client.userInfo.getUsers();
 }
