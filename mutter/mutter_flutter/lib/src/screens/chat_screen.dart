@@ -9,7 +9,7 @@ import 'package:uuid/uuid.dart';
 
 @RoutePage()
 class ChatScreen extends ConsumerWidget {
-  final _uuid = Uuid();
+  const ChatScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -28,7 +28,7 @@ class ChatScreen extends ConsumerWidget {
         onMessageSend: (text) {
           chatController.insertMessage(
             TextMessage(
-              id: _uuid.v7(),
+              id: Uuid().v7(),
               authorId: session.userName!,
               createdAt: DateTime.now().toUtc(),
               text: text,

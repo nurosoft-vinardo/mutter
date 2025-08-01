@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mutter_client/mutter_client.dart';
 import 'package:mutter_flutter/src/app/custom_chat_controller.dart';
 import 'package:mutter_flutter/src/app/router.dart';
-import 'package:mutter_flutter/src/app/router.gr.dart';
 import 'package:mutter_flutter/src/app/session.dart';
 import 'package:mutter_flutter/src/serverpod_client.dart';
 
